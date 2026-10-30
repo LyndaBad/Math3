@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Who Killed Mr. X? · Math 3 Escape Room</title>
+<link rel="icon" href="img/crest.png">
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============ JOIN ============ -->
+<section id="s-join" class="screen">
+  <div class="hero">
+    <img class="crest" src="img/crest.png" alt="">
+    <div class="tape">MATH 3 ESCAPE ROOM · UNITS 1–4</div>
+    <h1>Who Killed Mr. X?</h1>
+    <div class="sub">Crown Hill High School · Famous Americans Gala · Charlotte</div>
+  </div>
+
+  <div id="resume" class="card join hidden">
+    <div class="band green">Welcome back, detectives</div>
+    <p id="resume-text"></p>
+    <div class="center">
+      <button class="btn green" id="btn-resume">Carry on</button>
+      <button class="linkbtn" id="btn-new" style="margin-left:14px">Join as a new team</button>
+    </div>
+  </div>
+
+  <form id="join-form" class="card join" autocomplete="off">
+    <div class="band amber">Join the case</div>
+    <label class="field" for="f-game">Game code (on the board)</label>
+    <input type="text" id="f-game" maxlength="12" placeholder="e.g. B2" style="text-transform:uppercase">
+    <label class="field" for="f-team">Team name</label>
+    <input type="text" id="f-team" maxlength="30" placeholder="e.g. The Inverse Investigators">
+    <label class="field">Detectives on this Chromebook (first name and last initial)</label>
+    <div class="players">
+      <input type="text" class="f-player" maxlength="24" placeholder="Detective 1">
+      <input type="text" class="f-player" maxlength="24" placeholder="Detective 2">
+      <input type="text" class="f-player" maxlength="24" placeholder="Detective 3">
+      <input type="text" class="f-player" maxlength="24" placeholder="Detective 4">
+    </div>
+    <div class="err" id="join-err"></div>
+    <div class="center"><button class="btn" type="submit">Join the case</button></div>
+  </form>
+</section>
+
+<!-- ============ BRIEFING (and waiting room) ============ -->
+<section id="s-brief" class="screen hidden">
+  <div class="card center" id="wait-card" style="margin-bottom:16px">
+    <div id="wait-on" class="waiting">
+      <h2 style="font-size:28px">Read the case file while you wait</h2>
+      <p style="margin:6px 0">The clock starts when Detective Badmus says go.</p>
+      <div class="dots"><span></span><span></span><span></span></div>
+    </div>
+    <div id="wait-off" class="hidden">
+      <h2 style="font-size:28px" id="go-title">The clock is running!</h2>
+      <p style="margin:6px 0 12px">Get inside before the other teams do.</p>
+      <button class="btn green" id="btn-enter">Enter the school</button>
+    </div>
+  </div>
+
+  <div class="brief-grid">
+    <div class="card story">
+      <div class="band pink">The case</div>
+      <div id="story"></div>
+      <div class="rules" style="margin-top:12px">
+        <h3 style="font-size:22px;margin-bottom:6px">How to escape</h3>
+        <ol>
+          <li>Every answer is a whole number from 1 to 26. Turn it into a letter: A = 1, B = 2, … Z = 26.</li>
+          <li>The letters spell the code for the door. Split the questions in your team and work on your whiteboards.</li>
+          <li>Each code tells you something. Use it to rule out rooms, weapons and suspects.</li>
+          <li>Stuck? A hint shows the first step but adds 1 minute to your time.</li>
+          <li>Two wrong answers on a question locks it for 30 seconds. No guessing!</li>
+        </ol>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="band amber">The suspects</div>
+        <div class="suspects" id="brief-suspects"></div>
+      </div>
+      <div class="card">
+        <div class="band green">The scene</div>
+        <div class="ev-sec">ROOMS</div><div class="chips" id="brief-rooms"></div>
+        <div class="ev-sec">WEAPONS</div><div class="chips" id="brief-weapons"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GAME ============ -->
+<section id="s-game" class="hidden">
+  <header class="topbar">
+    <div>
+      <div class="team" id="tb-team"></div>
+      <div class="players-line" id="tb-players"></div>
+    </div>
+    <div class="locks" id="tb-locks"></div>
+    <div class="spacer"></div>
+    <div class="stat"><b id="tb-solved">0</b>solved</div>
+    <div class="stat"><b id="tb-hints">0</b>hints</div>
+    <div class="timer"><span id="tb-time">00:00</span><small id="tb-pen"></small></div>
+    <button class="iconbtn" id="tb-sound" title="Sound on or off" aria-label="Sound"></button>
+    <div class="stat" id="tb-net" title="Connection to Detective Badmus"></div>
+  </header>
+
+  <div class="game">
+    <main>
+      <div id="door"></div>
+  <div id="accuse" class="accuse card hidden">
+    <div class="band pink">The final door</div>
+    <h2 style="font-size:34px">Make your accusation</h2>
+    <p>All four doors are open. Name the killer, the room and the weapon to escape. A wrong accusation costs 2 minutes.</p>
+    <div class="sentence">
+      It was <select id="ac-suspect"></select>
+      in the <select id="ac-room"></select>
+      with the <select id="ac-weapon"></select>.
+    </div>
+    <div class="err" id="ac-err"></div>
+    <div class="center"><button class="btn pink" id="btn-accuse">Accuse!</button></div>
+  </div>
+    </main>
+    <aside class="evidence card">
+      <div class="band purple">Evidence board</div>
+      <div id="evidence"></div>
+    </aside>
+  </div>
+
+</section>
+
+<!-- ============ ESCAPED ============ -->
+<section id="s-escaped" class="screen hidden">
+  <div class="escaped card">
+    <img src="img/crest.png" alt="" style="width:90px">
+    <div class="stamp">CASE CLOSED</div>
+    <h1>You escaped!</h1>
+    <p id="esc-team" style="font-size:22px;margin:4px 0"></p>
+    <div class="bigtime" id="esc-time"></div>
+    <p id="esc-detail" style="margin:2px 0 8px;color:var(--muted)"></p>
+    <h2 id="esc-place" style="font-size:34px;margin:6px 0"></h2>
+    <div class="prize">First team out: +5 extra credit points on your Unit 4 Quiz grade</div>
+    <p id="esc-solution" style="font-size:19px"></p>
+    <p id="esc-motive" style="font-style:italic;color:var(--muted)"></p>
+    <p><b>Show Detective Badmus this screen.</b><br>
+      <span style="font-size:14px;color:var(--muted)">Final places are on Detective Badmus's board: time with penalties counts.</span></p>
+  </div>
+</section>
+
+<div id="overlay" class="overlay hidden"><div class="modal card" id="modal"></div></div>
+<div id="toast" class="toast hidden"></div>
+<canvas id="confetti" class="hidden"></canvas>
+
+<script src="vendor/katex/katex.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/net.js"></script>
+<script src="js/data.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
